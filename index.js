@@ -27,6 +27,7 @@ async function run() {
     const database = client.db("bike_website")
     const bikeCollection = database.collection("bikes")
     const orderCollection = database.collection("orders")
+    const usersCollection = database.collection("users")
 
     //--------GET api (bikes)------- //
     app.get("/bikes", async (req, res) => {
@@ -41,11 +42,36 @@ async function run() {
       const bike = await bikeCollection.findOne(query)
       res.json(bike)
     })
-    // post bikes
+
+    //  get order according to user
+    app.get("/purchasing", async (req, res) => {
+      const email = req.query.email
+      const query = { email: email }
+      const cursor = orderCollection.find(query)
+      const order = await cursor.toArray()
+      res.json(order)
+    })
+    // post orders
     app.post("/purchasing", async (req, res) => {
       const order = req.body
-      console.log("hit api", order)
+      // console.log("hit api", order)
       const result = await orderCollection.insertOne(order)
+      res.json(result)
+    })
+
+    // post user from client to db
+    app.post("/users", async (req, res) => {
+      const user = req.body
+      const result = await usersCollection.insertOne(user)
+      res.json(result)
+    })
+
+    // delete ordered product api
+    app.delete("/purchasing/:id", async (req, res) => {
+      const id = req.params.id
+      const query = { _id: ObjectId(id) }
+      const result = await orderCollection.deleteOne(query)
+      console.log("deleting", result)
       res.json(result)
     })
   } finally {
