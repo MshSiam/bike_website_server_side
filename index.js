@@ -43,6 +43,13 @@ async function run() {
       res.json(bike)
     })
 
+    // get all order
+    app.get("/purchasing", async (req, res) => {
+      const cursor = orderCollection.find({})
+      const orders = await cursor.toArray()
+      res.send(orders)
+    })
+
     //  get order according to user
     app.get("/purchasing", async (req, res) => {
       const email = req.query.email
@@ -64,6 +71,57 @@ async function run() {
       const user = req.body
       const result = await usersCollection.insertOne(user)
       res.json(result)
+    })
+
+    // admin matching
+    app.get("/users/:email", async (req, res) => {
+      const email = req.params.email
+      const query = { email: email }
+
+      const user = await usersCollection.findOne(query)
+      let isAdmin = false
+      if (user?.role === "admin") {
+        isAdmin = true
+      }
+      res.json({ admin: isAdmin })
+    })
+
+    // upsert
+    app.put("/users", async (req, res) => {
+      const user = req.body
+      const filter = { email: user.email }
+      const options = { upsert: true }
+      const updateDoc = { $set: user }
+      const result = await usersCollection.updateOne(filter, updateDoc, options)
+      res.json(result)
+    })
+
+    // admin
+    app.put("/users/admin", async (req, res) => {
+      const user = req.body
+      const filter = { email: user.email }
+      const updateDoc = { $set: { role: "admin" } }
+      const result = await usersCollection.updateOne(filter, updateDoc)
+      res.json(result)
+    })
+
+    // Update Api
+    app.put("/purchasing/:id", async (req, res) => {
+      const id = req.params.id
+      const updatedUser = req.body
+      console.log(updatedUser)
+      const filter = { _id: ObjectId(id) }
+      const options = { upsert: true }
+      const updateDoc = {
+        $set: {
+          status: updatedUser.status
+        }
+      }
+      console.log(updateDoc)
+      const resut = await orderCollection.updateOne(filter, updateDoc, options)
+
+      // console.log("Updating User", id)
+      res.json(resut)
     })
 
     // delete ordered product api
