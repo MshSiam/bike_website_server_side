@@ -1,16 +1,17 @@
 const express = require("express")
 const app = express()
 const cors = require("cors")
+const admin = require("firebase-admin")
+
 require("dotenv").config()
 const { MongoClient } = require("mongodb")
 const ObjectId = require("mongodb").ObjectId
-const admin = require("firebase-admin")
 
 const port = process.env.PORT || 5000
 
 // bike - website - adminsdk.json
 
-const serviceAccount = require("./bike-website-adminsdk.json")
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
