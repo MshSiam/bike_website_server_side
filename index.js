@@ -51,6 +51,7 @@ async function run() {
     const bikeCollection = database.collection("bikes")
     const orderCollection = database.collection("orders")
     const usersCollection = database.collection("users")
+    const reviewCollection = database.collection("reviews")
 
     //--------GET api (bikes)------- //
     app.get("/bikes", async (req, res) => {
@@ -70,6 +71,22 @@ async function run() {
       const spot = req.body
       // console.log("api hitted", spot)
       const result = await bikeCollection.insertOne(spot)
+      console.log(result)
+      res.json(result)
+    })
+
+    // get review
+    app.get("/review", async (req, res) => {
+      const cursor = reviewCollection.find({})
+      const review = await cursor.toArray()
+      res.send(review)
+    })
+
+    // --------POST api (review)------ //
+    app.post("/review", async (req, res) => {
+      const review = req.body
+      console.log("api hitted", review)
+      const result = await reviewCollection.insertOne(review)
       console.log(result)
       res.json(result)
     })
