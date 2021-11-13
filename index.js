@@ -100,11 +100,11 @@ async function run() {
       res.json(result)
     })
     // get all order
-    // app.get("/purchasing", async (req, res) => {
-    //   const cursor = orderCollection.find({})
-    //   const orders = await cursor.toArray()
-    //   res.send(orders)
-    // })
+    app.get("/purchasing", async (req, res) => {
+      const cursor = orderCollection.find({})
+      const orders = await cursor.toArray()
+      res.send(orders)
+    })
 
     //  get order according to user
     app.get("/purchasing", async (req, res) => {
