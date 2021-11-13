@@ -107,7 +107,7 @@ async function run() {
     })
 
     //  get order according to user
-    app.get("/purchasing", async (req, res) => {
+    app.get("/purchasing/email", async (req, res) => {
       const email = req.query.email
       const query = { email: email }
       console.log(query)
