@@ -13,7 +13,7 @@ app.use(express.json())
 const uri = ` mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.woosd.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 `
 
-console.log(uri)
+// console.log(uri)
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -42,7 +42,23 @@ async function run() {
       const bike = await bikeCollection.findOne(query)
       res.json(bike)
     })
+    // --------POST api (bikes)------ //
+    app.post("/bikes", async (req, res) => {
+      const spot = req.body
+      // console.log("api hitted", spot)
+      const result = await bikeCollection.insertOne(spot)
+      console.log(result)
+      res.json(result)
+    })
 
+    // delete bikes
+    app.delete("/bikes/:id", async (req, res) => {
+      const id = req.params.id
+      const query = { _id: ObjectId(id) }
+      const result = await bikeCollection.deleteOne(query)
+      console.log("deleting", result)
+      res.json(result)
+    })
     // get all order
     app.get("/purchasing", async (req, res) => {
       const cursor = orderCollection.find({})
@@ -109,7 +125,7 @@ async function run() {
     app.put("/purchasing/:id", async (req, res) => {
       const id = req.params.id
       const updatedUser = req.body
-      console.log(updatedUser)
+      // console.log(updatedUser)
       const filter = { _id: ObjectId(id) }
       const options = { upsert: true }
       const updateDoc = {
@@ -117,7 +133,7 @@ async function run() {
           status: updatedUser.status
         }
       }
-      console.log(updateDoc)
+      // console.log(updateDoc)
       const resut = await orderCollection.updateOne(filter, updateDoc, options)
 
       // console.log("Updating User", id)
@@ -129,7 +145,7 @@ async function run() {
       const id = req.params.id
       const query = { _id: ObjectId(id) }
       const result = await orderCollection.deleteOne(query)
-      console.log("deleting", result)
+      // console.log("deleting", result)
       res.json(result)
     })
   } finally {
